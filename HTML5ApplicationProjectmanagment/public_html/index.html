@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Tprjlates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Tprjlates/Other/html.html to edit this tprjlate
+-->
+
+<html lang="en">
+<head>
+<title>Bootstrap Example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+<h2>Project Management Form</h2>
+<form id="prjForm" method="post">
+<div class="form-group">
+<span><label for="prjId">Project ID:</label> <label id="prjIdMsg">
+</label></span>
+<input type="text" class="form-control" name="prjId" id="prjId"
+placeholder="Enter Project ID" required>
+</div>
+<div class="form-group">
+<label for="prjName">Project Name:</label>
+<input type="text" class="form-control" id="prjName"
+placeholder="Enter project Name" name="prjName">
+</div>
+<div class="form-group">
+<label for="prjAssignedTo">Assigned To:</label>
+<input type="text" class="form-control" id="prjAssignedTo"
+placeholder="Enter name of the person assigned to" name="prjAssignedTo">
+</div>
+    <div class="form-group">
+<label for="prjAssignedDate">Assigned Date:</label>
+<input type="date" class="form-control" id="prjAssignedDate"
+ name="prjAssignedDate">
+</div>
+<div class="form-group">
+<label for="prjDeadline">Deadline:</label>
+<input type="date" class="form-control" id="prjDeadline"
+ name="prjDeadline">
+</div>
+<input type="button" class="btn btn-primary" id="prjSave" value="Save"
+onclick="saveEmployee();">
+</form>
+</div>
+<script>
+$("#prjId").focus();
+function validateAndGetFormData() {
+var prjIdVar = $("#prjId").val();
+if (prjIdVar === "") {
+alert("Employee ID Required Value");
+$("#prjId").focus();
+return "";
+}
+var prjNameVar = $("#prjName").val();
+if (prjNameVar === "") {
+alert("Project Name is Required Value");
+$("#prjName").focus();
+return "";
+}
+var prjAssignedToVar = $("#prjAssignedTo").val();
+if (prjAssignedTo === "") {
+alert("Assigned to is Required Value");
+$("#prjAssignedTo").focus();
+return "";
+}
+var prjAssignedDateVar = $("#prjAssignedDate").val();
+if (prjAssignedDate === null) {
+alert("Assigned Date is Required Value");
+$("#prjAssignedDate").focus();
+return "";
+}
+var prjDeadlineVar = $("#prjDeadline").val();
+if (prjDeadline === "") {
+alert("Deadline is Required Value");
+$("#prjDeadline").focus();
+return "";
+}
+var jsonStrObj = {
+prjId: prjIdVar,
+prjName: prjNameVar,
+prjAssignedTo:prjAssignedToVar,
+prjAssignedDate:prjAssignedDateVar,
+prjDeadline:prjDeadlineVar
+};
+return JSON.stringify(jsonStrObj);
+}
+// This method is used to create PUT Json request.
+function createPUTRequest(connToken, jsonObj, dbName, relName) {
+var putRequest = "{\n"
++ "\"token\" : \""
++ connToken
++ "\","
++ "\"dbName\": \""
++ dbName
++ "\",\n" + "\"cmd\" : \"PUT\",\n"
++ "\"rel\" : \""
++ relName + "\","
++ "\"jsonStr\": \n"
++ jsonObj
++ "\n"
++ "}";
+return putRequest;
+}
+function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+var url = dbBaseUrl + apiEndPointUrl;
+var jsonObj;
+$.post(url, reqString, function (result) {
+jsonObj = JSON.parse(result);
+}).fail(function (result) {
+var dataJsonObj = result.responseText;
+jsonObj = JSON.parse(dataJsonObj);
+});
+return jsonObj;
+}
+function resetForm() {
+$("#prjId").val("");
+$("#prjName").val("");
+$("#prjAssignedTo").val("");
+$("#prjAssignedDate").val(null);
+$("#prjDeadline").val(null);
+$("#prjId").focus();
+}
+function saveEmployee() {
+var jsonStr = validateAndGetFormData();
+if (jsonStr === "") {
+return;
+}
+var putReqStr = createPUTRequest("90931846|-31949301145820478|90962992",
+jsonStr, "PROJECT-TABLE", "COLLEGE-DB");
+alert(putReqStr);
+jQuery.ajaxSetup({async: false});
+var resultObj = executeCommand(putReqStr,
+"http://api.login2explore.com:5577", "/api/iml");
+alert(JSON.stringify(resultObj));
+jQuery.ajaxSetup({async: true});
+resetForm();
+}
+</script>
+</body>
+</html>
